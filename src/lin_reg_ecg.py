@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.linalg import pinv
 
+
 def test_fit_line():
     x = np.array([0, 1, 2, 3])
     y = np.array([3, 4, 5, 6])
@@ -10,6 +11,7 @@ def test_fit_line():
     # TODO BONUS task - write an assert command that checks a and b (and what it should be in this test case), 
     # and a message to be displayed if the test fails.
 
+
 def _fit_line(x, y):
     """
     :param x: x coordinates of data points
@@ -17,12 +19,16 @@ def _fit_line(x, y):
     :return: a, b - slope and intercept of the fitted line
     """
     
-    # TODO BONUS task - write an assert command to check if there are at least two data points given, and a message to be displayed if the test fails.
+    assert x.shape[0] == y.shape[0], "Data dimension mismatch: Number of time dimensions must match number of corresponding function values."
+    assert x.shape[0] >= 2, "At leasts two data points are required."
 
-    # TODO calculate a and b (either in the form of sums, or by using a design matrix and pinv from numpy.linalg (already imported).
-    a = 1.0
-    b = 3.0 
-    return a, b
+    X = np.empty((x.shape[0], 2))
+    X[:, 0] = 1  # first column in matrix X corresponds to calculate the offset/bias b and therefore only contains values of 1
+    X[:, 1] = x  # second column in matrix X corresponds to calculate the linear parameter a which is provided via vector x
+
+    theta = np.matmul(pinv(X.T @ X) @ X.T, y)  # analytically calculated model parameters theta
+
+    return theta[1], theta[0]  # a, b
 
 
 def _intersection(a, b, c, d):
@@ -33,14 +39,19 @@ def _intersection(a, b, c, d):
     :param d: intercept of the "right" line
     :return: x, y - corrdinates of the intersection of two lines
     """
-    x = 0 # TODO x-coordinate of the intersection
-    y = 0 # TODO y-coordinate of the intersection
-    return x, y
+
+    # Calculate line intersection by using analytically calculated result in report
+    A = np.full((2, 2), [[a, -1], [c, -1]])
+    offsets = np.full((2, ), [-b, -d])
+
+    intersection = np.matmul(pinv(A), offsets)
+
+    return intersection[0], intersection[1]
 
 
 def check_if_improved(x_new, y_new, peak, time, signal):
     """
-    :param x_new: x-coordiinate of a new peak
+    :param x_new: x-coordinate of a new peak
     :param y_new: y-coordinate of a new peak
     :param peak: index of the peak that we were improving
     :param time: all x-coordinates for ecg signal
@@ -63,20 +74,38 @@ def find_new_peak(peak, time, sig):
     :param sig: ECG signal (the whole signal for 50 s)
     :return:
     """
-    # left line
-    n_points = 0 # TODO choose the number of points for the left line
-    ind = 0 # TODO indices for the left line, choose if you want to include the peak or not)
-    x = 0 # TODO
-    y = 0 # TODO
-    a, b = _fit_line(x, y)
 
-    # right line
-    n_points = 0 # TODO choose the number of points for the right line
-    ind = 0 # TODO indices for the right line, choose if you want to include the peak or not
-    x = 0 # TODO
-    y = 0 # TODO
-    c, d = _fit_line(x, y)
+    a, b = __fit_left_line(peak, sig, time)
+    c, d = __fit_right_line(peak, sig, time)
 
     # find intersection point
     x_new, y_new = _intersection(a, b, c, d)
     return x_new, y_new
+
+
+def __fit_right_line(peak, sig, time):
+    n_points = 2  # number of points excluding peak on the right line
+    x = np.empty(n_points)
+    y = np.empty(n_points)
+
+    for i in range(n_points):  # define points on the left line in reverse order
+        x[i] = time[peak + (i + 1)]
+        y[i] = sig[peak + (i + 1)]
+
+    c, d = _fit_line(x, y)
+
+    return c, d
+
+
+def __fit_left_line(peak, sig, time):
+    n_points = 2  # number of points excluding peak on the left line
+    x = np.empty(n_points)
+    y = np.empty(n_points)
+
+    for i in range(n_points):  # define points on the left line in reverse order
+        x[i] = time[peak - (i + 1)]
+        y[i] = sig[peak - (i + 1)]
+
+    a, b = _fit_line(x, y)
+
+    return a, b

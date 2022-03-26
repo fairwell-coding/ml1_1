@@ -12,17 +12,19 @@ cm_blue_orange = ListedColormap(['blue', 'orange'])
 
 def task_1_1():
     print('---- Task 1.1 ----')
-    test_fit_line()
+    # test_fit_line()
+
+    sampling_frequency = 180  # sampling frequency as defined in assignment sheet
 
     # Load ecg signal from 'data/ecg.npy' using np.load
-    ecg = np.ones((9000,)) # TODO: change me
+    ecg = np.load('data/ecg.npy')
 
     # Load indices of peaks from 'indices_peaks.npy' using np.load. There are 83 peaks.
-    peaks = np.ones((83,), dtype=int) # TODO: change me
+    peaks = np.load('data/indices_peaks.npy')
 
     # Create a "timeline". The ecg signal was sampled at sampling rate of 180 Hz, and in total 50 seconds.
     # Datapoints are evenly spaced. Hint: shape of time signal should be the same as the shape of ecg signal.
-    time = np.zeros((9000, )) # TODO: change me
+    time = np.linspace(0, ecg.shape[0] / sampling_frequency, ecg.shape[0], endpoint=False)  # evenly-space sampling frequency over ecg sample space
     print(f'time shape: {time.shape}, ecg signal shape: {ecg.shape}')
     print(f'First peak: ({time[peaks[0]]:.3f}, {ecg[peaks[0]]:.3f})')
 
@@ -166,9 +168,9 @@ def task_3():
 
 def main():
     task_1_1()
-    task_1_2()
-    task_2()
-    task_3()
+    # task_1_2()
+    # task_2()
+    # task_3()
 
 
 if __name__ == '__main__':
