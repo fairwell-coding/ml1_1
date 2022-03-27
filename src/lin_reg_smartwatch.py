@@ -26,19 +26,7 @@ def pearson_coefficient(x, y):
     return pearson_coef
 
 
-def __plot_scatter(x, y, x_label, y_label, theta: np.ndarray):
-    plt.plot(x, y, 'o', color="forestgreen", markersize="4")
-
-    # Fitted line
-    fitted_line = theta[1] * x + theta[0]
-    plt.plot(x, fitted_line, color="lightskyblue")
-
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.show()
-
-
-def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], independent_variable: str, dependent_variable: str, normalized=False, create_plot=False):
+def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], independent_variable: str, dependent_variable: str, normalized=False, create_plot=False, title=None):
     x = data[:, column_to_id[independent_variable]]
     y = data[:, column_to_id[dependent_variable]]
 
@@ -53,7 +41,7 @@ def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], in
     print('Pearson coefficient calculated by built-in numpy function: r = {0}'.format(np.corrcoef(x, y)[1][0]))  # comparison to verify that our own implementation is correct
 
     if create_plot:
-        __plot_scatter(x, y, independent_variable, dependent_variable, theta)
+        scatterplot_and_line(x, y, theta, independent_variable, dependent_variable, title)
 
 
 def __normalize_feature(feature):
@@ -94,11 +82,15 @@ def scatterplot_and_line(x, y, theta, xlabel='x', ylabel='y', title='Title'):
     :param theta: Coefficients of line that fits the data
     :return:
     """
-    # theta will be an array with two coefficients, representing the slope and intercept.
-    # In which format is it stored in the theta array? Take care of that when plotting the line.
-    # TODO
-    pass
 
+    plt.plot(x, y, 'o', color="forestgreen", markersize="4")
 
+    # Fitted line
+    fitted_line = theta[1] * x + theta[0]
+    plt.plot(x, fitted_line, color="lightskyblue")
 
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
 
+    plt.show()

@@ -2,7 +2,7 @@ from typing import Tuple
 
 import numpy as np
 from lin_reg_ecg import test_fit_line, find_new_peak, check_if_improved
-from lin_reg_smartwatch import pearson_coefficient, fit_predict_mse, scatterplot_and_line, perform_linear_regression
+from lin_reg_smartwatch import pearson_coefficient, fit_predict_mse, scatterplot_and_line, perform_linear_regression, __normalize_feature
 from gradient_descent import eggholder, gradient_eggholder, gradient_descent, plot_eggholder_function
 from sklearn.metrics import log_loss
 from sklearn.linear_model import LogisticRegression
@@ -91,22 +91,30 @@ def task_1_2():
     
     smartwatch_data = np.load('data/smartwatch_data.npy')
 
-    __plot_normalized_features(smartwatch_data[:, column_to_id["hours_sleep"]],
-                               smartwatch_data[:, column_to_id["hours_work"]],
-                               smartwatch_data[:, column_to_id["avg_pulse"]],
-                               smartwatch_data[:, column_to_id["max_pulse"]],
-                               smartwatch_data[:, column_to_id["duration"]],
-                               smartwatch_data[:, column_to_id["exercise_intensity"]],
-                               smartwatch_data[:, column_to_id["fitness_level"]],
-                               smartwatch_data[:, column_to_id["calories"]],
+    __plot_normalized_features(__normalize_feature(smartwatch_data[:, column_to_id["hours_sleep"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["hours_work"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["avg_pulse"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["max_pulse"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["duration"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["exercise_intensity"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["fitness_level"]]),
+                               __normalize_feature(smartwatch_data[:, column_to_id["calories"]]),
                                data=smartwatch_data)
 
-    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories", create_plot=True)
-    perform_linear_regression(smartwatch_data, column_to_id, "avg_pulse", "max_pulse", create_plot=True)
-    perform_linear_regression(smartwatch_data, column_to_id, "fitness_level", "duration", create_plot=True)
+    __meaningful_relationships(column_to_id, smartwatch_data)
+    __linearly_independent_relationships(column_to_id, smartwatch_data)
 
-    # perform_linear_regression(smartwatch_data, column_to_id, "exercise_intensity", "max_pulse", create_plot=True)
 
+def __linearly_independent_relationships(column_to_id, smartwatch_data):
+    perform_linear_regression(smartwatch_data, column_to_id, "exercise_intensity", "max_pulse", create_plot=True, title="1st linearly independent relationship: exercise_intensity -> max_pulse")
+    perform_linear_regression(smartwatch_data, column_to_id, "hours_work", "duration", create_plot=True, title="2nd linearly independentrelationship: hours_work -> duration")
+    perform_linear_regression(smartwatch_data, column_to_id, "hours_work", "avg_pulse", create_plot=True, title="3nd linearly independentrelationship: hours_work -> avg_pulse")
+
+
+def __meaningful_relationships(column_to_id, smartwatch_data):
+    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories", create_plot=True, title="1st meaningful relationship: duration -> calories")
+    perform_linear_regression(smartwatch_data, column_to_id, "avg_pulse", "max_pulse", create_plot=True, title="2nd meaningful relationship: avg_pulse -> max_pulse")
+    perform_linear_regression(smartwatch_data, column_to_id, "fitness_level", "duration", create_plot=True, title="3rd meaningful relationship: fitness_level -> duration")
 
 
 def __plot_normalized_features(avg_pulse_normalized, calories_normalized, duration_normalized, exercise_intensity_normalized, fitness_level_normalized, hours_sleep_normalized,
