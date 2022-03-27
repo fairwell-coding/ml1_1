@@ -7,9 +7,10 @@ def test_fit_line():
     y = np.array([3, 4, 5, 6])
     a, b = _fit_line(x, y)
 
-    print(a, b) # Should be: a = 1.0, b = 3.0
-    # TODO BONUS task - write an assert command that checks a and b (and what it should be in this test case), 
-    # and a message to be displayed if the test fails.
+    expected_result = [1.0, 3.0]
+    print(a, b)  # Should be: a = 1.0, b = 3.0
+
+    assert np.allclose([a, b], expected_result), "Line fitting is working incorrectly. Instead of the correct values a={0} and b={1} the _fit_line method calculated a={2} and b={3}.".format(expected_result[0], expected_result[1], a, b)
 
 
 def _fit_line(x, y):

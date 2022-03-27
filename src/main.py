@@ -12,7 +12,7 @@ cm_blue_orange = ListedColormap(['blue', 'orange'])
 
 def task_1_1():
     print('---- Task 1.1 ----')
-    # test_fit_line()
+    test_fit_line()
 
     sampling_frequency = 180  # sampling frequency as defined in assignment sheet
 
