@@ -1,6 +1,6 @@
 import numpy as np
 from lin_reg_ecg import test_fit_line, find_new_peak, check_if_improved
-from lin_reg_smartwatch import pearson_coefficient, fit_predict_mse, scatterplot_and_line
+from lin_reg_smartwatch import pearson_coefficient, fit_predict_mse, scatterplot_and_line, perform_linear_regression
 from gradient_descent import eggholder, gradient_eggholder, gradient_descent, plot_eggholder_function
 from sklearn.metrics import log_loss
 from sklearn.linear_model import LogisticRegression
@@ -87,18 +87,48 @@ def task_1_2():
                     "duration": 4, "exercise_intensity": 5, 
                     "fitness_level": 6, "calories": 7}
     
-    # Load the data from 'data/smartwatch_data.npy' using np.load
-    smartwatch_data = np.ones((100, 8)) # TODO: change me
+    smartwatch_data = np.load('data/smartwatch_data.npy')
 
-    # Now you can access it, for example,  smartwatch_data[:, column_to_id["hours_sleep"]]
+    __plot_normalized_features(smartwatch_data[:, column_to_id["hours_sleep"]],
+                               smartwatch_data[:, column_to_id["hours_work"]],
+                               smartwatch_data[:, column_to_id["avg_pulse"]],
+                               smartwatch_data[:, column_to_id["max_pulse"]],
+                               smartwatch_data[:, column_to_id["duration"]],
+                               smartwatch_data[:, column_to_id["exercise_intensity"]],
+                               smartwatch_data[:, column_to_id["fitness_level"]],
+                               smartwatch_data[:, column_to_id["calories"]],
+                               data=smartwatch_data)
 
-    # Meaningful relations
-    # TODO (use fit_predict_mse)
-    # print(f'Pearson coeff: {corr}, theta={theta}, MSE={err}')
+    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories")
 
-    # No linear relations
-    # TODO (use fit_predict_mse)
-    # print(f'Pearson coeff: {corr}, theta={theta}, MSE={err}')
+
+def __plot_normalized_features(avg_pulse_normalized, calories_normalized, duration_normalized, exercise_intensity_normalized, fitness_level_normalized, hours_sleep_normalized,
+                               hours_work_normalized, max_pulse_normalized, data):
+    sample_indices = np.linspace(0, data.shape[0], data.shape[0], endpoint=False)
+    plt.plot(sample_indices, hours_sleep_normalized, 'o', color="forestgreen", label="hours sleep", markersize="4")
+    plt.plot(sample_indices, hours_work_normalized, 'o', color="orange", label="hours work", markersize="4")
+    plt.plot(sample_indices, avg_pulse_normalized, 'o', color="red", label="avg pulse", markersize="4")
+    plt.plot(sample_indices, max_pulse_normalized, 'o', color="blue", label="max pulse", markersize="4")
+    plt.plot(sample_indices, duration_normalized, 'o', color="yellow", label="duration", markersize="4")
+    plt.plot(sample_indices, exercise_intensity_normalized, 'o', color="brown", label="exercise intensity", markersize="4")
+    plt.plot(sample_indices, fitness_level_normalized, 'o', color="purple", label="fitness level", markersize="4")
+    plt.plot(sample_indices, calories_normalized, 'o', color="grey", label="calories", markersize="4")
+    plt.legend()
+    plt.xlabel('Sample indices')
+    plt.ylabel('Normalized feature data')
+    plt.show()
+
+
+def __normalize_feature(feature):
+    """ Convert feature dimension to standard distribution (mean = 0, deviation = 1).
+    """
+
+    shifted_data = feature - np.mean(feature)
+    max = np.max(shifted_data)
+    min = np.min(shifted_data)
+    normalized_data = np.array([(x - min) / (max - min) for x in shifted_data])
+
+    return normalized_data
 
 
 def task_2():
@@ -197,8 +227,8 @@ def task_3():
 
 
 def main():
-    task_1_1()
-    # task_1_2()
+    # task_1_1()
+    task_1_2()
     # task_2()
     # task_3()
 
