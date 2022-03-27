@@ -100,6 +100,7 @@ def task_1_2():
                                data=smartwatch_data)
 
     perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories")
+    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories", normalized=True)
 
 
 def __plot_normalized_features(avg_pulse_normalized, calories_normalized, duration_normalized, exercise_intensity_normalized, fitness_level_normalized, hours_sleep_normalized,
@@ -117,18 +118,6 @@ def __plot_normalized_features(avg_pulse_normalized, calories_normalized, durati
     plt.xlabel('Sample indices')
     plt.ylabel('Normalized feature data')
     plt.show()
-
-
-def __normalize_feature(feature):
-    """ Convert feature dimension to standard distribution (mean = 0, deviation = 1).
-    """
-
-    shifted_data = feature - np.mean(feature)
-    max = np.max(shifted_data)
-    min = np.min(shifted_data)
-    normalized_data = np.array([(x - min) / (max - min) for x in shifted_data])
-
-    return normalized_data
 
 
 def task_2():
