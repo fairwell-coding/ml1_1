@@ -12,6 +12,9 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 cm_blue_orange = ListedColormap(['blue', 'orange'])
 
 
+RANDOM_STATE = 0
+
+
 def task_1_1():
     print('---- Task 1.1 ----')
     test_fit_line()
@@ -145,61 +148,51 @@ def task_2():
 
         axs.set_xlabel('x1')
         axs.set_ylabel('x2')
-        axs.legend(*p.legend_elements(), loc='best', bbox_to_anchor=(0.96, 1.15))    
+        axs.legend(*p.legend_elements(), loc='best', bbox_to_anchor=(1.02, 1.15))
 
         #fig.savefig(fig_name) # Uncomment if you want to save it
 
-    # Load the data from 'data/X.npy' using np.load
-    X_original = np.zeros((900, 2)) # TODO: change me 
+    X_original = np.load("data/X.npy")
+    task_labels = ["A", "B", "C"]
+    datasets = ["data/targets-dataset-1.npy", "data/targets-dataset-2.npy", "data/targets-dataset-3.npy"]
 
     for task in [0, 1, 2]:
         print(f'---- Logistic regression task {task + 1} ----')
-        if task == 0:
-            # Load the data from 'data/targets-dataset-1.npy' using np.load
-            y = np.zeros((900, )) # TODO: change me
-            # X = TODO # create design matrix based on features X_original
-        elif task == 1:
-            # Load the data from 'data/targets-dataset-2.npy' using np.load
-            y = np.zeros((900, )) # TODO: change me
-            # X = TODO # create design matrix based on features X_original
-        elif task == 2: 
-            # Load the data from 'data/targets-dataset-3.npy' using np.load
-            y = np.zeros((900, )) # TODO: change me
-            # X = TODO # create design matrix based on features X_original
 
-        # plot_datapoints(X, y, 'Targets', 'plots/targets_' + str(task+1) + '.png')
+        y = np.load(datasets[task])
+        X = X_original  # use both features x1 and x2
+        # X = X_original[:, 0].reshape((-1, 1))  # only use feature x2
+        # X = X_original[:, 1].reshape((-1, 1))  # only use feature x2
+        plot_datapoints(X_original, y, task_labels[task] + ': Targets', 'plots/targets_' + str(task+1) + '.png')
 
-        # Spilit data into train and test sets, using train_test_split function that is already imported 
-        # We want 20% of the data to be in the test set. Fix the random_state parameter (use value 0)).
-        # X_train, X_test, y_train, y_test = TODO
-        # print(f'Shapes of: X_train {X_train.shape}, X_test {X_test.shape}, y_train {y_train.shape}, y_test {y_test.shape}')
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
+        print(f'Shapes of: X_train {X_train.shape}, X_test {X_test.shape}, y_train {y_train.shape}, y_test {y_test.shape}')
 
-        # Create a classifier, and fit the model to data
-        # clf = # TODO use LogisticRegression from sklearn.linear_model (already imported)
-        
-        # acc_train, acc_test = # TODO
-        # print(f'Train accuracy: {acc_train:.4f}. Test accuracy: {acc_test:.4f}.')
-        
-        # TODO: Calculate the loss.
-        # Calculate PROBABILITIES of predictions. Output will be with the second dimension that equals 2, because we have 2 classes. 
-        # (The returned estimates for all classes are ordered by the label of classes.)
-        # When calculating log_loss, provide yhat_train and yhat_test of dimension (n_samples, ). That means, "reduce" the dimension, 
-        # simply by selecting (indexing) the probabilities of the positive class. 
+        clf = LogisticRegression(penalty='none', random_state=0)
+        model = clf.fit(X, y)
 
-        # loss_train, loss_test = # TODO use log_loss from sklearn.metrics (already imported)
-        # print(f'Train loss: {loss_train:.4f}. Test loss: {loss_test:.4f}.')
+        yhat_train_proba = model.predict_proba(X_train)
+        yhat_test_proba = model.predict_proba(X_test)
 
-  
-        # Calculate predictions, we need them for the plots
-        # yhat_train = # TODO
-        # yhat_test = # TODO
-        # yhat = # TODO and use the whole dataset
+        loss_train, loss_test = log_loss(y_train, yhat_train_proba), log_loss(y_test, yhat_test_proba)
+        print(f'Train loss: {loss_train:.4f}. Test loss: {loss_test:.4f}.')
 
-        # plot_datapoints(X_train, yhat_train, 'Predictions on the train set', fig_name='logreg_train' + str(task + 1) + '.png')
-        # plot_datapoints(X_test, yhat_test, 'Predictions on the test set', fig_name='logreg_test' + str(task + 1) + '.png')
-        # plot_datapoints(X, yhat, 'Predictions on the whole set', fig_name='logreg_whole_ds' + str(task + 1) + '.png')
+        yhat_train = model.predict(X_train)
+        yhat_test = model.predict(X_test)
+        yhat = model.predict(X)
+
+        acc_train = 100 * np.count_nonzero(yhat_train == y_train) / yhat_train.shape[0]
+        acc_test = 100 * np.count_nonzero(yhat_test == y_test) / yhat_test.shape[0]
+        print(f'Train accuracy: {acc_train:.4f}. Test accuracy: {acc_test:.4f}.')
+
+        plot_datapoints(X_train, yhat_train, task_labels[task] + ': Predictions on the train set', fig_name='logreg_train' + str(task + 1) + '.png')
+        plot_datapoints(X_test, yhat_test, task_labels[task] + ': Predictions on the test set', fig_name='logreg_test' + str(task + 1) + '.png')
+        plot_datapoints(X, yhat, task_labels[task] + ': Predictions on the whole set', fig_name='logreg_whole_ds' + str(task + 1) + '.png')
 
         # TODO: Print theta vector (and also the bias term). Hint: check Attributes of the classifier
+
+        plt.show()
+        print('x')
 
 
 def task_3():
@@ -231,8 +224,8 @@ def task_3():
 
 def main():
     # task_1_1()
-    task_1_2()
-    # task_2()
+    # task_1_2()
+    task_2()
     # task_3()
 
 
