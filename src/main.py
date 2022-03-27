@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 from lin_reg_ecg import test_fit_line, find_new_peak, check_if_improved
 from lin_reg_smartwatch import pearson_coefficient, fit_predict_mse, scatterplot_and_line, perform_linear_regression
@@ -23,7 +25,7 @@ def task_1_1():
     peaks = np.load('data/indices_peaks.npy')
 
     time = np.linspace(0, ecg.shape[0] / sampling_frequency, ecg.shape[0], endpoint=False)  # evenly-space sampling frequency over ecg sample space
-    __plot_ecg_over_time(time, ecg, peaks, sampling_frequency)
+    __plot_ecg_over_time(time, ecg, peaks)
 
     new_peaks = np.zeros(peaks.size)
     new_sig = np.zeros(peaks.size)
@@ -66,7 +68,7 @@ def __bonus_plot(lower_bound, upper_bound, ecg, peaks, new_peaks, new_sig, impro
     plt.show()
 
 
-def __plot_ecg_over_time(time, ecg, peaks, sampling_frequency):
+def __plot_ecg_over_time(time, ecg, peaks):
     print(f'time shape: {time.shape}, ecg signal shape: {ecg.shape}')
     print(f'First peak: ({time[peaks[0]]:.3f}, {ecg[peaks[0]]:.3f})')
 
@@ -99,8 +101,12 @@ def task_1_2():
                                smartwatch_data[:, column_to_id["calories"]],
                                data=smartwatch_data)
 
-    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories")
-    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories", normalized=True)
+    perform_linear_regression(smartwatch_data, column_to_id, "duration", "calories", create_plot=True)
+    perform_linear_regression(smartwatch_data, column_to_id, "avg_pulse", "max_pulse", create_plot=True)
+    perform_linear_regression(smartwatch_data, column_to_id, "fitness_level", "duration", create_plot=True)
+
+    # perform_linear_regression(smartwatch_data, column_to_id, "exercise_intensity", "max_pulse", create_plot=True)
+
 
 
 def __plot_normalized_features(avg_pulse_normalized, calories_normalized, duration_normalized, exercise_intensity_normalized, fitness_level_normalized, hours_sleep_normalized,

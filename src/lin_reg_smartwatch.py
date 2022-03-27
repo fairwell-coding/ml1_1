@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,7 +26,19 @@ def pearson_coefficient(x, y):
     return pearson_coef
 
 
-def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], independent_variable: str, dependent_variable: str, normalized=False):
+def __plot_scatter(x, y, x_label, y_label, theta: np.ndarray):
+    plt.plot(x, y, 'o', color="forestgreen", markersize="4")
+
+    # Fitted line
+    fitted_line = theta[1] * x + theta[0]
+    plt.plot(x, fitted_line, color="lightskyblue")
+
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.show()
+
+
+def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], independent_variable: str, dependent_variable: str, normalized=False, create_plot=False):
     x = data[:, column_to_id[independent_variable]]
     y = data[:, column_to_id[dependent_variable]]
 
@@ -36,8 +48,12 @@ def perform_linear_regression(data: np.ndarray, column_to_id: Dict[str, int], in
 
     theta, mse = fit_predict_mse(x, y)
     pearson_coef = pearson_coefficient(x, y)
+
     print('{0} -> {1}: theta = {2}, mse = {3}, pearson_coef= {4}'.format(independent_variable, dependent_variable, theta, mse, pearson_coef))
     print('Pearson coefficient calculated by built-in numpy function: r = {0}'.format(np.corrcoef(x, y)[1][0]))  # comparison to verify that our own implementation is correct
+
+    if create_plot:
+        __plot_scatter(x, y, independent_variable, dependent_variable, theta)
 
 
 def __normalize_feature(feature):
