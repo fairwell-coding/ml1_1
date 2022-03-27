@@ -81,7 +81,7 @@ def find_new_peak(peak, time, sig):
 
     # find intersection point
     x_new, y_new = _intersection(a, b, c, d)
-    return x_new, y_new
+    return x_new, y_new, [(a, b), (c, d)]
 
 
 def __fit_right_line(peak, sig, time):

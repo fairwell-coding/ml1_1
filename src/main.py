@@ -22,9 +22,51 @@ def task_1_1():
     # Load indices of peaks from 'indices_peaks.npy' using np.load. There are 83 peaks.
     peaks = np.load('data/indices_peaks.npy')
 
-    # Create a "timeline". The ecg signal was sampled at sampling rate of 180 Hz, and in total 50 seconds.
-    # Datapoints are evenly spaced. Hint: shape of time signal should be the same as the shape of ecg signal.
     time = np.linspace(0, ecg.shape[0] / sampling_frequency, ecg.shape[0], endpoint=False)  # evenly-space sampling frequency over ecg sample space
+    __plot_ecg_over_time(time, ecg, peaks, sampling_frequency)
+
+    new_peaks = np.zeros(peaks.size)
+    new_sig = np.zeros(peaks.size)
+    improved = np.zeros(peaks.size)
+    fitted_lines = []
+
+    for i, peak in enumerate(peaks):
+        x_new, y_new, fitted_line = find_new_peak(peak, time, ecg)
+        fitted_lines.append(fitted_line)
+        new_peaks[i] = x_new
+        new_sig[i] = y_new
+        improved[i] = check_if_improved(x_new, y_new, peak, time, ecg)
+
+    __bonus_plot(0, 8.2, ecg, peaks, new_peaks, new_sig, improved, time, fitted_lines)
+    __bonus_plot(0.05, 0.25, ecg, peaks, new_peaks, new_sig, improved, time, fitted_lines)
+
+    print(f'Improved peaks: {np.sum(improved)}, total peaks: {peaks.size}')
+    print(f'Percentage of peaks improved: {np.sum(improved) / peaks.size :.4f}')
+
+
+def __bonus_plot(lower_bound, upper_bound, ecg, peaks, new_peaks, new_sig, improved, time, fitted_lines):
+    plt.plot(time, ecg)
+    plt.plot(time[peaks], ecg[peaks], "x")
+    plt.plot(new_peaks[improved == 0], new_sig[improved == 0], 'o', color="red", label="new unimproved peaks")
+    plt.plot(new_peaks[improved == 1], new_sig[improved == 1], 'o', color="forestgreen", label="new improved peaks")
+    plt.legend()
+
+    for fitted_line in fitted_lines:
+        x = np.linspace(lower_bound, upper_bound)
+        left_line = fitted_line[0][0] * x + fitted_line[0][1]
+        plt.plot(x, left_line, color="lightskyblue")
+        right_line = fitted_line[1][0] * x + fitted_line[1][1]
+        plt.plot(x, right_line, color="lightskyblue")
+
+    plt.ylim(-1.5, 3)
+    plt.xlim(lower_bound, upper_bound)
+    plt.xlabel('Time [s]')
+    plt.ylabel('Amplitude [V]')
+
+    plt.show()
+
+
+def __plot_ecg_over_time(time, ecg, peaks, sampling_frequency):
     print(f'time shape: {time.shape}, ecg signal shape: {ecg.shape}')
     print(f'First peak: ({time[peaks[0]]:.3f}, {ecg[peaks[0]]:.3f})')
 
@@ -33,20 +75,8 @@ def task_1_1():
     plt.plot(time[peaks], ecg[peaks], "x")
     plt.xlabel('Time [s]')
     plt.ylabel('Amplitude [V]')
+
     plt.show()
-
-    new_peaks = np.zeros(peaks.size)
-    new_sig = np.zeros(peaks.size)
-    improved = np.zeros(peaks.size)
-
-    for i, peak in enumerate(peaks):
-        x_new, y_new = find_new_peak(peak, time, ecg)
-        new_peaks[i] = x_new
-        new_sig[i] = y_new
-        improved[i] = check_if_improved(x_new, y_new, peak, time, ecg)
-
-    print(f'Improved peaks: {np.sum(improved)}, total peaks: {peaks.size}')
-    print(f'Percentage of peaks improved: {np.sum(improved) / peaks.size :.4f}')
 
 
 def task_1_2():
