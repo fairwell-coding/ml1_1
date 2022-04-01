@@ -161,14 +161,14 @@ def task_2():
 
         y = np.load(datasets[task])
         X = X_original  # use both features x1 and x2
-        # X = X_original[:, 0].reshape((-1, 1))  # only use feature x2
+        # X = X_original[:, 0].reshape((-1, 1))  # only use feature x1
         # X = X_original[:, 1].reshape((-1, 1))  # only use feature x2
         plot_datapoints(X_original, y, task_labels[task] + ': Targets', 'plots/targets_' + str(task+1) + '.png')
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
         print(f'Shapes of: X_train {X_train.shape}, X_test {X_test.shape}, y_train {y_train.shape}, y_test {y_test.shape}')
 
-        clf = LogisticRegression(penalty='none', random_state=0)
+        clf = LogisticRegression(penalty='l2', random_state=0)
         model = clf.fit(X, y)
 
         yhat_train_proba = model.predict_proba(X_train)
@@ -189,7 +189,8 @@ def task_2():
         plot_datapoints(X_test, yhat_test, task_labels[task] + ': Predictions on the test set', fig_name='logreg_test' + str(task + 1) + '.png')
         plot_datapoints(X, yhat, task_labels[task] + ': Predictions on the whole set', fig_name='logreg_whole_ds' + str(task + 1) + '.png')
 
-        # TODO: Print theta vector (and also the bias term). Hint: check Attributes of the classifier
+        print(f'theta* = {model.coef_[0][0]:.4f}, {model.coef_[0][1]:.4f}')
+        print(f'bias = {model.intercept_[0]:.4f}')
 
         plt.show()
         print('x')
