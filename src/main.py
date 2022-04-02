@@ -13,6 +13,7 @@ cm_blue_orange = ListedColormap(['blue', 'orange'])
 
 
 RANDOM_STATE = 0
+RANDOM_STATE_TASK3 = 17
 
 
 def task_1_1():
@@ -199,17 +200,22 @@ def task_2():
 def task_3():
     print('\n---- Task 3 ----')
 
-    np.random.seed(RANDOM_STATE)
+    np.random.seed(RANDOM_STATE_TASK3)
 
     plot_eggholder_function(eggholder)
 
     x0 = np.array([np.random.randint(-512, 512), np.random.randint(-512, 512)])
     print(f'Starting point: x={x0}')
 
-    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=1e-4, max_iter=100)
+    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=1e-4, max_iter=1000)
     print(f'Minimum found: f({x}) = {eggholder(x)}')
-    
-    # TODO Make a plot of the cost over iteration. Do not forget to label the plot (xlabel, ylabel, title).
+
+    x_ = np.linspace(0, E_list.shape[0], E_list.shape[0])
+    plt.plot(x_, E_list)
+    plt.xlabel("iterations")
+    plt.ylabel("Eggholder function value")
+    plt.title("Gradient descent cost change over iterations")
+    plt.show()
 
     x_min = np.array([512, 404.2319])
     print(f'Global minimum: f({x_min}) = {eggholder(x_min)}')

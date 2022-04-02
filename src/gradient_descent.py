@@ -43,19 +43,14 @@ def gradient_descent(f, df, x, learning_rate, max_iter):
     E_list = np.zeros(max_iter)
 
     for i in range(max_iter):
-        x = x - learning_rate * df(x, f)
+        x = x - learning_rate * df(x)
         E_list[i] = f(x)
 
     return x, E_list
 
 
 def eggholder(x):
-    z = - (x[1] + 47) * np.sin(np.sqrt(np.abs(x[0] / 2 + (x[1] + 47)))) - x[0] * np.sin(np.sqrt(np.abs(x[0] - (x[1] + 47))))  # Eggholder cost function
-    return z
-
-
-def gradient_special(x: np.ndarray, y: np.ndarray, z: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray):
-    pass
+    return - (x[1] + 47) * np.sin(np.sqrt(np.abs(x[0] / 2 + (x[1] + 47)))) - x[0] * np.sin(np.sqrt(np.abs(x[0] - (x[1] + 47))))  # Eggholder cost function
 
 
 def gradient_eggholder(x, func=eggholder, epsilon=1e-4):
@@ -69,7 +64,7 @@ def gradient_eggholder(x, func=eggholder, epsilon=1e-4):
 
     grad_x = - (x[1] + 47) * np.cos(np.sqrt(np.abs(sqrt_term_1))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_1))) * sqrt_term_1 / np.abs(sqrt_term_1) * 1 / 2 \
              - np.sin(np.sqrt(np.abs(sqrt_term_2))) - x[0] * np.cos(np.sqrt(np.abs(sqrt_term_2))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_2))) * sqrt_term_2 / np.abs(sqrt_term_2)
-    grad_y = - np.sin(np.sqrt(np.abs(sqrt_term_1))) - (x[1] + 47) * np.cos(np.sqrt(np.abs(sqrt_term_1)) * 1 / (2 * np.sqrt(np.abs(sqrt_term_1))) * sqrt_term_1 / np.abs(sqrt_term_1) \
-             + x[0] * np.cos(np.sqrt(np.abs(sqrt_term_2))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_2))) * sqrt_term_2 / np.abs(sqrt_term_2))
+    grad_y = - np.sin(np.sqrt(np.abs(sqrt_term_1))) - (x[1] + 47) * np.cos(np.sqrt(np.abs(sqrt_term_1)) * 1 / (2 * np.sqrt(np.abs(sqrt_term_1))) * sqrt_term_1 / np.abs(sqrt_term_1) + x[0] * np.cos(
+        np.sqrt(np.abs(sqrt_term_2))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_2))) * sqrt_term_2 / np.abs(sqrt_term_2))
 
     return np.array([grad_x, grad_y])
