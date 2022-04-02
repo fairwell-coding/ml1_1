@@ -198,36 +198,34 @@ def task_2():
 
 def task_3():
     print('\n---- Task 3 ----')
-    # Plot the function, to see how it looks like
+
+    np.random.seed(RANDOM_STATE)
+
     plot_eggholder_function(eggholder)
 
-    x0 = np.array([0, 0]) # TODO: choose a 2D random point from randint (-512, 512)
+    x0 = np.array([np.random.randint(-512, 512), np.random.randint(-512, 512)])
     print(f'Starting point: x={x0}')
 
-    # Call the function gradient_descent. Choose max_iter, learning_rate.
-    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=0.0, max_iter=0)
-
-    # print(f'Minimum found: f({x}) = {eggholder(x)}')
+    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=1e-4, max_iter=100)
+    print(f'Minimum found: f({x}) = {eggholder(x)}')
     
-   # TODO Make a plot of the cost over iteration. Do not forget to label the plot (xlabel, ylabel, title).
+    # TODO Make a plot of the cost over iteration. Do not forget to label the plot (xlabel, ylabel, title).
 
     x_min = np.array([512, 404.2319])
     print(f'Global minimum: f({x_min}) = {eggholder(x_min)}')
 
-    # Test 1 - Problematic point 1. See HW1, Tasks 3.6 and 3.7.
-    x, y = 0, 0 # TODO: change me
-    print('A problematic point: ', gradient_eggholder([x, y]))
+    x, y = 0, -47
+    print(f'Gradient at a problematic point[{x}, {y}]: ', gradient_eggholder([x, y]))
     
-    # Test 2 - Problematic point 2. See HW1, Tasks 3.6 and 3.7.
-    x, y = 0, 0 # TODO: change me
-    print('Another problematic point: ', gradient_eggholder([x, y]))
+    x, y = -94, 0
+    print(f'Gradient at another problematic point[{x}, {y}]: ', gradient_eggholder([x, y]))
 
 
 def main():
     # task_1_1()
     # task_1_2()
-    task_2()
-    # task_3()
+    # task_2()
+    task_3()
 
 
 if __name__ == '__main__':
