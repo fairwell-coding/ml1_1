@@ -13,7 +13,8 @@ cm_blue_orange = ListedColormap(['blue', 'orange'])
 
 
 RANDOM_STATE = 0
-RANDOM_STATE_TASK3 = 17
+RANDOM_STATE_TASK3 = 13
+# 12, 13, 17
 
 
 def task_1_1():
@@ -207,14 +208,15 @@ def task_3():
     x0 = np.array([np.random.randint(-512, 512), np.random.randint(-512, 512)])
     print(f'Starting point: x={x0}')
 
-    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=1e-4, max_iter=1000)
+    learning_rate = 1e-1
+    x, E_list = gradient_descent(eggholder, gradient_eggholder, x0, learning_rate=learning_rate, max_iter=1000)
     print(f'Minimum found: f({x}) = {eggholder(x)}')
 
     x_ = np.linspace(0, E_list.shape[0], E_list.shape[0])
     plt.plot(x_, E_list)
     plt.xlabel("iterations")
     plt.ylabel("Eggholder function value")
-    plt.title("Gradient descent cost change over iterations")
+    plt.title(f"Gradient descent cost change over iterations (LR = {learning_rate})")
     plt.show()
 
     x_min = np.array([512, 404.2319])

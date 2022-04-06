@@ -54,17 +54,20 @@ def eggholder(x):
 
 
 def gradient_eggholder(x, func=eggholder, epsilon=1e-4):
-    sqrt_term_1 = x[0] / 2 + x[1] + 47
-    sqrt_term_2 = x[0] - (x[1] + 47)
+    term_1 = x[0] / 2 + x[1] + 47
+    term_2 = x[0] - (x[1] + 47)
 
-    if sqrt_term_1 == 0 or sqrt_term_2 == 0:
+    if term_1 == 0 or term_2 == 0:
         grad_x = func([x[0] + epsilon, x[1]]) - func([x[0] - epsilon, x[1]])
         grad_y = func([x[0], x[1] + epsilon]) - func([x[0], x[1] - epsilon])
         return np.multiply([grad_x, grad_y], 1 / (2 * epsilon))
 
-    grad_x = - (x[1] + 47) * np.cos(np.sqrt(np.abs(sqrt_term_1))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_1))) * sqrt_term_1 / np.abs(sqrt_term_1) * 1 / 2 \
-             - np.sin(np.sqrt(np.abs(sqrt_term_2))) - x[0] * np.cos(np.sqrt(np.abs(sqrt_term_2))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_2))) * sqrt_term_2 / np.abs(sqrt_term_2)
-    grad_y = - np.sin(np.sqrt(np.abs(sqrt_term_1))) - (x[1] + 47) * np.cos(np.sqrt(np.abs(sqrt_term_1)) * 1 / (2 * np.sqrt(np.abs(sqrt_term_1))) * sqrt_term_1 / np.abs(sqrt_term_1) + x[0] * np.cos(
-        np.sqrt(np.abs(sqrt_term_2))) * 1 / (2 * np.sqrt(np.abs(sqrt_term_2))) * sqrt_term_2 / np.abs(sqrt_term_2))
+    sqrt_term_1 = np.sqrt(np.abs(term_1))
+    sqrt_term_2 = np.sqrt(np.abs(term_2))
+
+    grad_x = - (x[1] + 47) * np.cos(sqrt_term_1) * 1 / (2 * sqrt_term_1) * term_1 / np.abs(term_1) * 1 / 2 \
+             - np.sin(sqrt_term_2) - x[0] * np.cos(sqrt_term_2) * 1 / (2 * sqrt_term_2) * term_2 / np.abs(term_2)
+    grad_y = - np.sin(sqrt_term_1) - (x[1] + 47) * np.cos(sqrt_term_1) * 1 / (2 * sqrt_term_1) * term_1 / np.abs(term_1) + x[0] * np.cos(
+        sqrt_term_2) * 1 / (2 * sqrt_term_2) * term_2 / np.abs(term_2)
 
     return np.array([grad_x, grad_y])
