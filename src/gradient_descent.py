@@ -67,7 +67,7 @@ def gradient_eggholder(x, func=eggholder, epsilon=1e-4):
 
     grad_x = - (x[1] + 47) * np.cos(sqrt_term_1) * 1 / (2 * sqrt_term_1) * term_1 / np.abs(term_1) * 1 / 2 \
              - np.sin(sqrt_term_2) - x[0] * np.cos(sqrt_term_2) * 1 / (2 * sqrt_term_2) * term_2 / np.abs(term_2)
-    grad_y = - np.sin(sqrt_term_1) - (x[1] + 47) * np.cos(sqrt_term_1) * 1 / (2 * sqrt_term_1) * term_1 / np.abs(term_1) + x[0] * np.cos(
-        sqrt_term_2) * 1 / (2 * sqrt_term_2) * term_2 / np.abs(term_2)
+    grad_y = - np.sin(sqrt_term_1) - (x[1] + 47) * np.cos(sqrt_term_1) * 1 / (2 * sqrt_term_1) * term_1 / np.abs(term_1) \
+             + x[0] * np.cos(sqrt_term_2) * 1 / (2 * sqrt_term_2) * term_2 / np.abs(term_2)
 
     return np.array([grad_x, grad_y])
